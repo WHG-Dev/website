@@ -100,7 +100,7 @@ function setNamesAndUpdateOnLoad() {
         .catch(error => console.error("Error:", error));
 }
 
-lastUpdateTimeElement.onload = setNamesAndUpdateOnLoad();
+//lastUpdateTimeElement.onload = setNamesAndUpdateOnLoad();
 
 function updateCharts() {
     if (espSelectorElement.value.length != 0) {
@@ -246,12 +246,13 @@ let mouseY = 0;
 const renderer = new THREE.WebGLRenderer({
     antialias: true, canvas: document.querySelector("#bg")
 });
-renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x253949, 1)
+renderer.setClearColor(0x253949, 1);
 
 //camera
 const camera = new THREE.OrthographicCamera(-20, 20, 20, -20, .1, 200);//(90,window.innerWidth / window.innerHeight,.1,5000);
+camera.position.z = 10;
 
 
 //Loaders
@@ -361,7 +362,7 @@ function updateCameraSize() {
 
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    backgroundPlaneMesh.scale.set(viewSize * aspect * 2, aspect * viewSize * 2, 1);
+    backgroundPlaneMesh.scale.set(viewSize * aspect * 2, /* aspect * */viewSize * 2, 1);
 }
 
 window.addEventListener('resize', updateCameraSize, false);
@@ -376,5 +377,16 @@ function onMouseMove(e) {
     cursorLight.position.set(mouseX * 10 * aspect, -(mouseY * 10), -2);
 
 }
+function onTouchMove(e) {
+    const touch = e.touches[0];
+    const aspect = window.innerWidth / window.innerHeight;
+
+    let mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
+    let mouseY = (touch.clientY / window.innerHeight) * 2 - 1;
+
+    cursorLight.position.set(mouseX * 10 * aspect, -(mouseY * 10), -2);
+}
+
+document.body.addEventListener("touchmove", onTouchMove, { passive: true });
 
 document.body.onmousemove = onMouseMove;
