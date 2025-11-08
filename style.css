@@ -85,12 +85,10 @@ button {
   background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(3.8vh);
   transition: transform 100ms ease-in-out;
-  height: 40vh;
+  min-height: 250px;
+  height:auto;
 }
 
-.box {
-  height: 40vh;
-}
 
 .box:hover,
 .sun-stats:hover {
@@ -115,6 +113,9 @@ button {
 /* Chart */
 .chart {
   padding: 5%;
+  width:90%;
+
+  height: auto;
 }
 
 /* ESP Selector */
@@ -184,5 +185,9 @@ button {
   .esp-selector {
     font-size: 2vh;
     padding: 0.8vh;
+  }
+  .chart {
+    width: auto;
+    height: auto;
   }
 }
