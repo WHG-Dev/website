@@ -1,10 +1,10 @@
 # Ignore everything by default
-*
+#*
 
 # But keep git metadata and this file
 !.gitignore
 !.gitattributes
-
+node_modules/
 # Keep common top-level project files and lockfiles
 !README.md
 !LICENSE
