@@ -11,6 +11,12 @@ const currPressureElement = document.getElementById("currPressure");
 
 const espSelectorElement = document.getElementById("espSelector");
 
+// target element: second .no-border-box (if present). We will position the cloud near this box
+const targetBox = (function(){
+    const boxes = document.querySelectorAll('.no-border-box');
+    return boxes && boxes.length > 1 ? boxes[1] : null;
+})();
+
 function setNames(names) {
     for (const key in names) {
         if (names.hasOwnProperty(key)) {
@@ -147,7 +153,9 @@ var tempChart = new Chart(tempChartctx, {
             data: [15, 16, 17, 17, 16]
         }]
     }, options: {
-        responsive: true, animation: false, plugins: {
+        responsive: true, 
+        maintainAspectRatio: false,
+        animation: false, plugins: {
             legend: {
                 display: true, labels: {
                     color: "white"
@@ -178,7 +186,10 @@ var pressureChart = new Chart(pressureChartctx, {
             data: [50, 45, 55, 60, 70]
         }]
     }, options: {
-        responsive: true, animation: false, plugins: {
+        responsive: true, 
+        maintainAspectRatio: false,
+        animation: false, 
+        plugins: {
             legend: {
                 display: true, labels: {
                     color: "white"
@@ -209,7 +220,10 @@ var humidityChart = new Chart(humidityChartctx, {
             data: [50, 45, 55, 60, 70]
         }]
     }, options: {
-        responsive: true, animation: false, plugins: {
+        responsive: true, 
+        maintainAspectRatio: false,
+        animation: false, 
+        plugins: {
             legend: {
                 display: true, labels: {
                     color: "white"
@@ -283,8 +297,13 @@ ModelLoader.load("models/cloud1.gltf", function (gltf) {
 }, function (error) {
     console.error(error);
 })
-const cloudBasePos = new THREE.Vector3(11.5, 4.75, -5);
-const moveRadius = .25;
+// Keep the cloud in a stable relative position inside the view
+// x,y are relative (0..1) where (0,0) is top-left of the visible ortho area and (1,1) is bottom-right
+const cloudRelativePos = { x: 0.85, y: 0.7, z: -5 };
+let cloudBasePos = new THREE.Vector3(); // computed on resize so it stays relative
+const baseCloudScale = 0.9; // default model scale (matches loader)
+const baseMoveRadius = 0.25; // movement radius at scale 1
+let moveRadius = baseMoveRadius; // will be adjusted by scale factor on resize
 const speed = 0.5 + Math.random();
 const maxRotation = 10;
 let rotationSpeed = 0.0001;
@@ -321,9 +340,6 @@ const backgroundPlaneMat = new THREE.MeshToonMaterial({color: 0x253949})
 const backgroundPlaneMesh = new THREE.Mesh(backgroundPlaneGeo, backgroundPlaneMat);
 backgroundPlaneMesh.position.z = -3;
 scene.add(backgroundPlaneMesh);
-
-
-const div = document.getElementById("temperatur");
 
 //Licht
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x87cefa, 2);
@@ -363,6 +379,60 @@ function updateCameraSize() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     backgroundPlaneMesh.scale.set(viewSize * aspect * 2, /* aspect * */viewSize * 2, 1);
+    // recompute cloud base position so it keeps the same relative screen position
+    function computeCloudBasePos(viewSize, aspect) {
+        const left = -viewSize * aspect;
+        const right = viewSize * aspect;
+        const top = viewSize;
+        const bottom = -viewSize;
+
+        const width = right - left;
+        const height = top - bottom;
+
+        const worldX = left + cloudRelativePos.x * width;
+        const worldY = top - cloudRelativePos.y * height; // y: 0 -> top
+        const worldZ = cloudRelativePos.z;
+        return new THREE.Vector3(worldX, worldY, worldZ);
+    }
+
+    // If there is a second .no-border-box, use its screen center to compute the world position
+    if (targetBox) {
+    const rect = targetBox.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    // shift a bit left relative to the box so the cloud sits to the left of the box
+    const screenOffsetX = -rect.width * 0.10; // negative => left, 15% of box width
+    const shiftedCenterX = centerX + screenOffsetX;
+    // normalized 0..1 within the window
+    const nx = shiftedCenterX / window.innerWidth;
+    const ny = centerY / window.innerHeight;
+
+        const left = -viewSize * aspect;
+        const right = viewSize * aspect;
+        const top = viewSize;
+        const bottom = -viewSize;
+
+        const worldX = left + nx * (right - left);
+        const worldY = top - ny * (top - bottom); // convert screen y -> world y (screen y grows downward)
+        cloudBasePos.set(worldX, worldY, cloudRelativePos.z);
+        // scale cloud and movement relative to the target box size so it becomes smaller on small screens
+    const refWidth = 420; // reference width in px where scale=1
+    // use a non-linear curve so the cloud becomes smaller faster when the box gets small
+    // scaleBase = rect.width / refWidth, then apply exponent < 1 to emphasize shrink on small widths
+    const raw = Math.max(0.01, rect.width / refWidth);
+    const scaleFactor = Math.max(0.35, Math.min(1.1, Math.pow(raw, 0.7)));
+        if (cloud) cloud.scale.set(baseCloudScale * scaleFactor, baseCloudScale * scaleFactor, baseCloudScale * scaleFactor);
+        moveRadius = baseMoveRadius * scaleFactor;
+    } else {
+        cloudBasePos = computeCloudBasePos(viewSize, aspect);
+        // fallback scale based on window width
+    // fallback: use window width with the same non-linear curve
+    const rawWindow = Math.max(0.01, window.innerWidth / 1200);
+    const scaleFactor = Math.max(0.35, Math.min(1.1, Math.pow(rawWindow, 0.7)));
+        if (cloud) cloud.scale.set(baseCloudScale * scaleFactor, baseCloudScale * scaleFactor, baseCloudScale * scaleFactor);
+        moveRadius = baseMoveRadius * scaleFactor;
+    }
+    if (cloud) cloud.position.copy(cloudBasePos);
 }
 
 window.addEventListener('resize', updateCameraSize, false);
