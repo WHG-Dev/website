@@ -100,7 +100,7 @@ function setNamesAndUpdateOnLoad() {
         .catch(error => console.error("Error:", error));
 }
 
-//lastUpdateTimeElement.onload = setNamesAndUpdateOnLoad();
+lastUpdateTimeElement.onload = setNamesAndUpdateOnLoad();
 
 function updateCharts() {
     if (espSelectorElement.value.length != 0) {
@@ -390,3 +390,4 @@ function onTouchMove(e) {
 document.body.addEventListener("touchmove", onTouchMove, { passive: true });
 
 document.body.onmousemove = onMouseMove;
+
