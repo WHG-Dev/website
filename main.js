@@ -73,7 +73,7 @@ function updateChartData(json) {
     var pressures = [];
 
     json.data.forEach(entry => {
-        times.push(new Date(entry.unix*1000).toTimeString());
+        times.push(new Date(entry.unix*1000).toLocaleTimeString());
         temps.push(parseFloat(entry.temperature));
         humidities.push(parseFloat(entry.humidity));
         pressures.push(parseInt(entry.bar));
