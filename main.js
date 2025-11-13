@@ -47,10 +47,10 @@ function updateCurrData(json) {
     currTemperatureElement.textContent = "Aktuell:" + json.temperature.toFixed(2) + "°C";
     currHumidityElement.textContent = "Aktuell:" + json.humidity.toFixed(2) + "%";
     currPressureElement.textContent = "Aktuell:" + json.bar + "ppm";
+    const now = new Date(json.unix);
+    lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + now.toLocaleString();
 
-    lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + new Date(json.unix).toLocaleString();
-
-    const now = new Date(json.unix * 1000);
+    
     /*
     const sunPosition = SunCalc.getPosition(now, latitude, longitude);
     const azimuth = (sunPosition.azimuth * 180) / Math.PI;
