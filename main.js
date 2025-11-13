@@ -12,7 +12,7 @@ const currPressureElement = document.getElementById("currPressure");
 const espSelectorElement = document.getElementById("espSelector");
 
 // target element: second .no-border-box (if present). We will position the cloud near this box
-const targetBox = (function(){
+const targetBox = (function () {
     const boxes = document.querySelectorAll('.no-border-box');
     return boxes && boxes.length > 1 ? boxes[1] : null;
 })();
@@ -50,7 +50,7 @@ function updateCurrData(json) {
 
     lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + json.timestamp;
 
-    const now = new Date(json.unix*1000);
+    const now = new Date(json.unix * 1000);
     /*
     const sunPosition = SunCalc.getPosition(now, latitude, longitude);
     const azimuth = (sunPosition.azimuth * 180) / Math.PI;
@@ -59,8 +59,8 @@ function updateCurrData(json) {
     altitudeElement.textContent = altitude.toFixed(2)+"°";
     */
 
-    const sunrise = getSunrise(latitude, longitude, now);
-    const sunset = getSunset(latitude, longitude, now);
+    const sunrise = SunriseSunsetJS.getSunrise(latitude, longitude, now);
+    const sunset = SunriseSunsetJS.getSunset(latitude, longitude, now);
     sunriseElement.textContent = sunrise.getHours().toString().padStart(2, "0") + ":" + sunrise.getMinutes().toString().padStart(2, "0");
     sunsetElement.textContent = sunset.getHours().toString().padStart(2, "0") + ":" + sunset.getMinutes().toString().padStart(2, "0");
 }
@@ -124,13 +124,12 @@ espSelectorElement.onchange = updateCharts;
 
 setInterval(updateCharts, 30000);
 
-import Chart from "chart.js/auto"
-//import SunCalc from "suncalc"
-import {getSunrise, getSunset} from "sunrise-sunset-js";
-import * as THREE from "three"
-import {EffectComposer} from "three/addons/postprocessing/EffectComposer.js";
-import {RenderPass} from "three/addons/postprocessing/RenderPass.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import * as THREE from 'three'
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import Chart from 'chart.js/auto'
+import SunriseSunsetJS from 'sunrise-sunset-js'
 
 const options = {
     plugins: {
@@ -153,7 +152,7 @@ var tempChart = new Chart(tempChartctx, {
             data: [15, 16, 17, 17, 16]
         }]
     }, options: {
-        responsive: true, 
+        responsive: true,
         maintainAspectRatio: false,
         animation: false, plugins: {
             legend: {
@@ -186,9 +185,9 @@ var pressureChart = new Chart(pressureChartctx, {
             data: [50, 45, 55, 60, 70]
         }]
     }, options: {
-        responsive: true, 
+        responsive: true,
         maintainAspectRatio: false,
-        animation: false, 
+        animation: false,
         plugins: {
             legend: {
                 display: true, labels: {
@@ -220,9 +219,9 @@ var humidityChart = new Chart(humidityChartctx, {
             data: [50, 45, 55, 60, 70]
         }]
     }, options: {
-        responsive: true, 
+        responsive: true,
         maintainAspectRatio: false,
-        animation: false, 
+        animation: false,
         plugins: {
             legend: {
                 display: true, labels: {
@@ -260,7 +259,7 @@ let mouseY = 0;
 const renderer = new THREE.WebGLRenderer({
     antialias: true, canvas: document.querySelector("#bg")
 });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x253949, 1);
 
@@ -286,7 +285,7 @@ let cloud
 ModelLoader.load("models/cloud1.gltf", function (gltf) {
     cloud = gltf.scene;
     cloud.scale.set(0.9, 0.9, 0.9)
-    const cloudMat = new THREE.MeshToonMaterial({color: 0xffffff, depthTest: false, depthWrite: false});
+    const cloudMat = new THREE.MeshToonMaterial({ color: 0xffffff, depthTest: false, depthWrite: false });
     cloud.traverse((o) => {
         if (o.isMesh) o.material = cloudMat;
     });
@@ -336,7 +335,7 @@ function animateCloud(cloud) {
 //scene.add(sunMesh);
 
 const backgroundPlaneGeo = new THREE.PlaneGeometry(100, 100, 1, 1);
-const backgroundPlaneMat = new THREE.MeshToonMaterial({color: 0x253949})
+const backgroundPlaneMat = new THREE.MeshToonMaterial({ color: 0x253949 })
 const backgroundPlaneMesh = new THREE.Mesh(backgroundPlaneGeo, backgroundPlaneMat);
 backgroundPlaneMesh.position.z = -3;
 scene.add(backgroundPlaneMesh);
@@ -397,15 +396,15 @@ function updateCameraSize() {
 
     // If there is a second .no-border-box, use its screen center to compute the world position
     if (targetBox) {
-    const rect = targetBox.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    // shift a bit left relative to the box so the cloud sits to the left of the box
-    const screenOffsetX = -rect.width * 0.10; // negative => left, 15% of box width
-    const shiftedCenterX = centerX + screenOffsetX;
-    // normalized 0..1 within the window
-    const nx = shiftedCenterX / window.innerWidth;
-    const ny = centerY / window.innerHeight;
+        const rect = targetBox.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        // shift a bit left relative to the box so the cloud sits to the left of the box
+        const screenOffsetX = -rect.width * 0.10; // negative => left, 15% of box width
+        const shiftedCenterX = centerX + screenOffsetX;
+        // normalized 0..1 within the window
+        const nx = shiftedCenterX / window.innerWidth;
+        const ny = centerY / window.innerHeight;
 
         const left = -viewSize * aspect;
         const right = viewSize * aspect;
@@ -416,19 +415,19 @@ function updateCameraSize() {
         const worldY = top - ny * (top - bottom); // convert screen y -> world y (screen y grows downward)
         cloudBasePos.set(worldX, worldY, cloudRelativePos.z);
         // scale cloud and movement relative to the target box size so it becomes smaller on small screens
-    const refWidth = 420; // reference width in px where scale=1
-    // use a non-linear curve so the cloud becomes smaller faster when the box gets small
-    // scaleBase = rect.width / refWidth, then apply exponent < 1 to emphasize shrink on small widths
-    const raw = Math.max(0.01, rect.width / refWidth);
-    const scaleFactor = Math.max(0.35, Math.min(1.1, Math.pow(raw, 0.7)));
+        const refWidth = 420; // reference width in px where scale=1
+        // use a non-linear curve so the cloud becomes smaller faster when the box gets small
+        // scaleBase = rect.width / refWidth, then apply exponent < 1 to emphasize shrink on small widths
+        const raw = Math.max(0.01, rect.width / refWidth);
+        const scaleFactor = Math.max(0.35, Math.min(1.1, Math.pow(raw, 0.7)));
         if (cloud) cloud.scale.set(baseCloudScale * scaleFactor, baseCloudScale * scaleFactor, baseCloudScale * scaleFactor);
         moveRadius = baseMoveRadius * scaleFactor;
     } else {
         cloudBasePos = computeCloudBasePos(viewSize, aspect);
         // fallback scale based on window width
-    // fallback: use window width with the same non-linear curve
-    const rawWindow = Math.max(0.01, window.innerWidth / 1200);
-    const scaleFactor = Math.max(0.35, Math.min(1.1, Math.pow(rawWindow, 0.7)));
+        // fallback: use window width with the same non-linear curve
+        const rawWindow = Math.max(0.01, window.innerWidth / 1200);
+        const scaleFactor = Math.max(0.35, Math.min(1.1, Math.pow(rawWindow, 0.7)));
         if (cloud) cloud.scale.set(baseCloudScale * scaleFactor, baseCloudScale * scaleFactor, baseCloudScale * scaleFactor);
         moveRadius = baseMoveRadius * scaleFactor;
     }

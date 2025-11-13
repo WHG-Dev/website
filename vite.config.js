@@ -1,13 +1,18 @@
+// ...existing code...
 import { defineConfig } from 'vite';
-import   {visualizer } from 'rollup-plugin-visualizer';
 import compress from 'vite-plugin-compression';
 import copy from 'rollup-plugin-copy';
+import { viteExternalsPlugin } from 'vite-plugin-externals'
 
 export default defineConfig({
+  // prevent dep pre-bundling for CDN-provided packages so dev/preview doesn't try to resolve them locally
+  optimizeDeps: {
+    exclude: ['three', 'three/addons', 'chart.js', 'chart.js/auto', 'sunrise-sunset-js']
+  },
   build: {
-    target: 'es2020',               // moderner Output -> kleinere Bundles
+    target: 'es2020',
     sourcemap: false,
-    minify: 'terser',               // oder 'esbuild' (schneller)
+    minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
@@ -17,29 +22,35 @@ export default defineConfig({
         comments: false
       }
     },
-    cssCodeSplit: true,             // CSS in mehrere Dateien splitten
-    assetsInlineLimit: 4096,        // Größe (bytes) bis zu der Assets inline werden
-    chunkSizeWarningLimit: 600,     // optional: Warnlimit anpassen
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
-      // copy plugin added so we can include additional static folders (models/) in the final `dist`
+      // treat three, chart.js and sunrise-sunset-js (and their subpaths) as external so they are loaded from CDN via import-map
+      external: [
+        'three',
+        /^three\/examples\/jsm\/.*/,
+        'chart.js/auto',
+        'sunrise-sunset-js'
+      ],
       plugins: [
         copy({ targets: [{ src: 'models/**/*', dest: 'dist/models' }], hook: 'writeBundle' })
       ],
       output: {
-        // einfache Aufsplitterung: node_modules -> vendor, spezielle große libs in eigene chunks
         manualChunks(id) {
           if (!id) return;
-          if (id.includes('node_modules')) {
-            if (id.includes('chart.js')) return 'vendor-chartjs';
-            if (id.includes('three')) return 'vendor-three';
-            return 'vendor';
-          }
+          if (id.includes('node_modules')) return 'vendor';
+        },
+        globals: {
+          three: 'THREE',
+          'chart.js/auto': 'Chart',
+          'sunrise-sunset-js': 'SunriseSunsetJS'
+
         }
       }
     }
   },
   plugins: [
-    visualizer({ filename: 'dist/stats.html', open: false }), // bundle analysieren
-    compress({ algorithm: 'brotliCompress' })                 // generiert .br .gz
+    compress({ algorithm: 'brotliCompress' })
   ]
 });
