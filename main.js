@@ -48,7 +48,7 @@ function updateCurrData(json) {
     currHumidityElement.textContent = "Aktuell:" + json.humidity.toFixed(2) + "%";
     currPressureElement.textContent = "Aktuell:" + json.bar + "ppm";
 
-    lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + json.timestamp;
+    lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + new Date(json.unix).toLocaleString();
 
     const now = new Date(json.unix * 1000);
     /*
@@ -73,7 +73,7 @@ function updateChartData(json) {
     var pressures = [];
 
     json.data.forEach(entry => {
-        times.push(entry.timestamp);
+        times.push(new Date(entry.unix).toLocaleString());
         temps.push(parseFloat(entry.temperature));
         humidities.push(parseFloat(entry.humidity));
         pressures.push(parseInt(entry.bar));
