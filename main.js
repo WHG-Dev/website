@@ -47,7 +47,7 @@ function updateCurrData(json) {
     currTemperatureElement.textContent = "Aktuell:" + json.temperature.toFixed(2) + "°C";
     currHumidityElement.textContent = "Aktuell:" + json.humidity.toFixed(2) + "%";
     currPressureElement.textContent = "Aktuell:" + json.bar + "ppm";
-    const now = new Date(json.unix);
+    const now = new Date(json.unix*1000);
     lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + now.toLocaleString();
 
     
