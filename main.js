@@ -35,13 +35,13 @@ function updateCurrData(json) {
     console.log('Current data:', json);
     
     // Handle both old format (direct properties) and new format (nested in data)
-    const data = json.data || json;
+    const data = json;
     
     currTemperatureElement.textContent = "Aktuell: " + (data.temperature || 0).toFixed(2) + "°C";
     currHumidityElement.textContent = "Aktuell: " + (data.humidity || 0).toFixed(2) + "%";
     
     // Handle different pressure field names (pressure, bar, gasval)
-    const pressure = data.pressure || data.bar || data.gasval || 0;
+    const pressure = data.pressure;
     currPressureElement.textContent = "Aktuell: " + pressure + " hPa";
 
     // Handle timestamp (unix_timestamp or unix)
