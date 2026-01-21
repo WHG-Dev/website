@@ -45,7 +45,7 @@ function updateCurrData(json) {
     currPressureElement.textContent = "Aktuell: " + pressure + " hPa";
 
     // Handle timestamp (unix_timestamp or unix)
-    const timestamp = data.unix_timestamp || data.unix;
+    const timestamp = data.unix_timestamp;
     if (timestamp) {
         lastUpdateTimeElement.innerHTML = "letztes Update: <br>" + new Date(timestamp * 1000).toLocaleString();
     }
