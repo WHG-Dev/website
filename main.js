@@ -43,27 +43,55 @@ function setNames(names) {
 }
 
 function updateCurrData(json) {
-    console.log(json);
-    currTemperatureElement.textContent = "Aktuell:" + json.temperature.toFixed(2) + "°C";
-    currHumidityElement.textContent = "Aktuell:" + json.humidity.toFixed(2) + "%";
-    currPressureElement.textContent = "Aktuell:" + json.bar + "ppm";
-    const now = new Date(json.unix*1000);
-    lastUpdateTimeElement.innerHTML = "letztes Update: \<br\>" + now.toLocaleString();
-
+    console.log('Current data:', json);
     
-    /*
-    const sunPosition = SunCalc.getPosition(now, latitude, longitude);
-    const azimuth = (sunPosition.azimuth * 180) / Math.PI;
-    const altitude = (sunPosition.altitude * 180) / Math.PI;
-    azimuthElement.textContent = azimuth.toFixed(2)+"°";
-    altitudeElement.textContent = altitude.toFixed(2)+"°";
-    */
+    // Handle both old format (direct properties) and new format (nested in data)
+    const data = json.data || json;
+    
+    currTemperatureElement.textContent = "Aktuell: " + (data.temperature || 0).toFixed(2) + "°C";
+    currHumidityElement.textContent = "Aktuell: " + (data.humidity || 0).toFixed(2) + "%";
+    
+    // Handle different pressure field names (pressure, bar, gasval)
+    const rawPressure = (data.pressure ?? data.bar ?? data.gasval);
+    const pressure = rawPressure !== undefined && rawPressure !== null ? parseFloat(rawPressure) : 0;
+    const displayPressure = isNaN(pressure) ? 0 : pressure;
+    currPressureElement.textContent = "Aktuell: " + displayPressure + " hPa";
 
-    const sunrise = SunriseSunsetJS.getSunrise(latitude, longitude, now);
-    const sunset = SunriseSunsetJS.getSunset(latitude, longitude, now);
-    sunriseElement.textContent = sunrise.getHours().toString().padStart(2, "0") + ":" + sunrise.getMinutes().toString().padStart(2, "0");
-    sunsetElement.textContent = sunset.getHours().toString().padStart(2, "0") + ":" + sunset.getMinutes().toString().padStart(2, "0");
+    // Handle timestamp (unix_timestamp, unix, or use current time)
+    const timestamp = data.unix_timestamp || data.unix;
+    if (timestamp && timestamp > 0) {
+        const date = new Date(timestamp * 1000);
+        if (!isNaN(date.getTime())) {
+            lastUpdateTimeElement.innerHTML = "letztes Update: <br>" + date.toLocaleString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        } else {
+            lastUpdateTimeElement.innerHTML = "letztes Update: <br>Ungültige Zeit";
+        }
+    } else {
+        lastUpdateTimeElement.innerHTML = "letztes Update: <br>Keine Zeitangabe";
+    }
+
+    // Sun position calculations
+    const now = (timestamp && timestamp > 0) ? new Date(timestamp * 1000) : new Date();
+    
+    try {
+        const sunrise = SunriseSunsetJS.getSunrise(latitude, longitude, now);
+        const sunset = SunriseSunsetJS.getSunset(latitude, longitude, now);
+        sunriseElement.textContent = sunrise.getHours().toString().padStart(2, "0") + ":" + 
+                                    sunrise.getMinutes().toString().padStart(2, "0");
+        sunsetElement.textContent = sunset.getHours().toString().padStart(2, "0") + ":" + 
+                                   sunset.getMinutes().toString().padStart(2, "0");
+    } catch (error) {
+        console.error('Error calculating sun times:', error);
+    }
 }
+
 
 function updateChartData(json) {
     console.log(json.data);
