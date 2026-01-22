@@ -82,8 +82,8 @@ function updateCurrData(json) {
 function updateChartData(json) {
     console.log('Chart data:', json);
     
-    // New API returns data in json.data array
-    const dataArray = json.data || [];
+    // Handle response format { data: [...] }
+    const dataArray = Array.isArray(json) ? json : (json.data || []);
     
     var times = [];
     var temps = [];
