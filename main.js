@@ -96,13 +96,18 @@ function updateChartData(json) {
         // Handle both unix_timestamp and unix
         const timestamp = entry.unix_timestamp || entry.unix;
         
-        if (timestamp && timestamp > 0) {
-            const date = new Date(timestamp * 1000);
-            if (!isNaN(date.getTime())) {
-                times.push(date.toLocaleTimeString('de-DE', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                }));
+        if (timestamp != null && timestamp !== undefined) {
+            const tsNumber = Number(timestamp);
+            if (!Number.isNaN(tsNumber)) {
+                const date = new Date(tsNumber * 1000);
+                if (!isNaN(date.getTime())) {
+                    times.push(date.toLocaleTimeString('de-DE', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }));
+                } else {
+                    times.push('--:--');
+                }
             } else {
                 times.push('--:--');
             }
