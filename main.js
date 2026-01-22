@@ -104,7 +104,7 @@ function updateChartData(json) {
         times.push(new Date(entry.unix*1000).toLocaleTimeString());
         temps.push(parseFloat(entry.temperature));
         humidities.push(parseFloat(entry.humidity));
-        pressures.push(parseInt(entry.bar));
+        pressures.push(parseInt(entry.pressure));
     })
 
     humidityChart.data.labels = times;
@@ -207,9 +207,8 @@ var pressureChart = new Chart(pressureChartctx, {
     type: "line", data: {
         labels: ["10:00:00", "11:00:00", "12:00:00", "13:00:00", "14:00:00"], datasets: [{
             label: "mBar Luftdruck",
-            backgroundColor: "#259ed9",
-            borderColor: "#253949",
-            borderWidth: 1.5,
+            backgroundColor: "white",
+            borderColor: "white",
             data: [1015, 1013, 1012, 1014, 1016]
         }]
     }, options: {
