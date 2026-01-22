@@ -35,23 +35,37 @@ function updateCurrData(json) {
     console.log('Current data:', json);
     
     // Handle both old format (direct properties) and new format (nested in data)
-    const data = json;
+    const data = json.data || json;
     
     currTemperatureElement.textContent = "Aktuell: " + (data.temperature || 0).toFixed(2) + "°C";
     currHumidityElement.textContent = "Aktuell: " + (data.humidity || 0).toFixed(2) + "%";
     
     // Handle different pressure field names (pressure, bar, gasval)
-    const pressure = data.pressure;
+    const pressure = data.pressure || data.bar || data.gasval || 0;
     currPressureElement.textContent = "Aktuell: " + pressure + " hPa";
 
-    // Handle timestamp (unix_timestamp or unix)
-    const timestamp = data.unix_timestamp;
-    if (timestamp) {
-        lastUpdateTimeElement.innerHTML = "letztes Update: <br>" + new Date(timestamp * 1000).toLocaleString();
+    // Handle timestamp (unix_timestamp, unix, or use current time)
+    const timestamp = data.unix_timestamp || data.unix;
+    if (timestamp && timestamp > 0) {
+        const date = new Date(timestamp * 1000);
+        if (!isNaN(date.getTime())) {
+            lastUpdateTimeElement.innerHTML = "letztes Update: <br>" + date.toLocaleString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        } else {
+            lastUpdateTimeElement.innerHTML = "letztes Update: <br>Ungültige Zeit";
+        }
+    } else {
+        lastUpdateTimeElement.innerHTML = "letztes Update: <br>Keine Zeitangabe";
     }
 
     // Sun position calculations
-    const now = timestamp ? new Date(timestamp * 1000) : new Date();
+    const now = (timestamp && timestamp > 0) ? new Date(timestamp * 1000) : new Date();
     
     try {
         const sunrise = SunriseSunsetJS.getSunrise(latitude, longitude, now);
@@ -79,10 +93,20 @@ function updateChartData(json) {
     dataArray.forEach(entry => {
         // Handle both unix_timestamp and unix
         const timestamp = entry.unix_timestamp || entry.unix;
-        times.push(new Date(timestamp * 1000).toLocaleTimeString('de-DE', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        }));
+        
+        if (timestamp && timestamp > 0) {
+            const date = new Date(timestamp * 1000);
+            if (!isNaN(date.getTime())) {
+                times.push(date.toLocaleTimeString('de-DE', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }));
+            } else {
+                times.push('--:--');
+            }
+        } else {
+            times.push('--:--');
+        }
         
         temps.push(parseFloat(entry.temperature || 0));
         humidities.push(parseFloat(entry.humidity || 0));
