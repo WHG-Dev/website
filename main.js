@@ -41,8 +41,10 @@ function updateCurrData(json) {
     currHumidityElement.textContent = "Aktuell: " + (data.humidity || 0).toFixed(2) + "%";
     
     // Handle different pressure field names (pressure, bar, gasval)
-    const pressure = data.pressure || data.bar || data.gasval || 0;
-    currPressureElement.textContent = "Aktuell: " + pressure + " hPa";
+    const rawPressure = (data.pressure ?? data.bar ?? data.gasval);
+    const pressure = rawPressure !== undefined && rawPressure !== null ? parseFloat(rawPressure) : 0;
+    const displayPressure = isNaN(pressure) ? 0 : pressure;
+    currPressureElement.textContent = "Aktuell: " + displayPressure + " hPa";
 
     // Handle timestamp (unix_timestamp, unix, or use current time)
     const timestamp = data.unix_timestamp || data.unix;
