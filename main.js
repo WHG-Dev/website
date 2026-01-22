@@ -176,13 +176,13 @@ var tempChart = new Chart(tempChartctx, {
 
 var pressureChartctx = document.getElementById("pressure-chart").getContext("2d")
 var pressureChart = new Chart(pressureChartctx, {
-    type: "bar", data: {
+    type: "line", data: {
         labels: ["10:00:00", "11:00:00", "12:00:00", "13:00:00", "14:00:00"], datasets: [{
             label: "mBar Luftdruck",
             backgroundColor: "#259ed9",
             borderColor: "#253949",
             borderWidth: 1.5,
-            data: [50, 45, 55, 60, 70]
+            data: [1015, 1013, 1012, 1014, 1016]
         }]
     }, options: {
         responsive: true,
@@ -198,7 +198,7 @@ var pressureChart = new Chart(pressureChartctx, {
             y: {
                 ticks: {
                     color: "white"
-                }, beginAtZero: true
+                }, beginAtZero: false
             }, x: {
                 ticks: {
                     color: "white"
