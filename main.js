@@ -44,13 +44,13 @@ function setNames(names) {
 
 function updateCurrData(json) {
     console.log('Current data:', json);
-    
+
     // Handle both old format (direct properties) and new format (nested in data)
     const data = json.data || json;
-    
+
     currTemperatureElement.textContent = "Aktuell: " + (data.temperature || 0).toFixed(2) + "°C";
     currHumidityElement.textContent = "Aktuell: " + (data.humidity || 0).toFixed(2) + "%";
-    
+
     // Handle different pressure field names (pressure, bar, gasval)
     const rawPressure = (data.pressure ?? data.bar ?? data.gasval);
     const pressure = rawPressure !== undefined && rawPressure !== null ? parseFloat(rawPressure) : 0;
@@ -79,14 +79,14 @@ function updateCurrData(json) {
 
     // Sun position calculations
     const now = (timestamp && timestamp > 0) ? new Date(timestamp * 1000) : new Date();
-    
+
     try {
         const sunrise = SunriseSunsetJS.getSunrise(latitude, longitude, now);
         const sunset = SunriseSunsetJS.getSunset(latitude, longitude, now);
-        sunriseElement.textContent = sunrise.getHours().toString().padStart(2, "0") + ":" + 
-                                    sunrise.getMinutes().toString().padStart(2, "0");
-        sunsetElement.textContent = sunset.getHours().toString().padStart(2, "0") + ":" + 
-                                   sunset.getMinutes().toString().padStart(2, "0");
+        sunriseElement.textContent = sunrise.getHours().toString().padStart(2, "0") + ":" +
+            sunrise.getMinutes().toString().padStart(2, "0");
+        sunsetElement.textContent = sunset.getHours().toString().padStart(2, "0") + ":" +
+            sunset.getMinutes().toString().padStart(2, "0");
     } catch (error) {
         console.error('Error calculating sun times:', error);
     }
@@ -101,7 +101,7 @@ function updateChartData(json) {
     var pressures = [];
 
     json.data.forEach(entry => {
-        times.push(new Date(entry.unix*1000).toLocaleTimeString());
+        times.push(new Date(entry.unix * 1000).toLocaleTimeString());
         temps.push(parseFloat(entry.temperature));
         humidities.push(parseFloat(entry.humidity));
         pressures.push(parseInt(entry.pressure));
@@ -225,7 +225,19 @@ var pressureChart = new Chart(pressureChartctx, {
             y: {
                 ticks: {
                     color: "white"
-                }, beginAtZero: false
+                },
+                min: function (context) {
+                    const values = context.chart.data.datasets.flatMap(ds => ds.data);
+                    const minValue = Math.min(...values);
+                    const roundedMinValue = 100 * Math.round(0.01 * minValue)
+                    return roundedMinValue;
+                },
+                max: function (context) {
+                    const values = context.chart.data.datasets.flatMap(ds => ds.data);
+                    const maxValue = Math.max(...values);
+                    const roundedMaxValue = 100 * Math.round(0.01 * maxValue)
+                    return roundedMaxValue;
+                }
             }, x: {
                 ticks: {
                     color: "white"
