@@ -225,7 +225,9 @@ var pressureChart = new Chart(pressureChartctx, {
             y: {
                 ticks: {
                     color: "white"
-                }, beginAtZero: false
+                }, beginAtZero: false,
+                suggestedMin: 950,
+                suggestedMax: 1050
             }, x: {
                 ticks: {
                     color: "white"
