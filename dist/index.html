@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MC Website</title>
+  <title>Wetterstation</title>
 
   <script type="importmap">
 {
@@ -18,63 +18,48 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-cbOdaCak.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-nkyrM-jA.css">
+  <script type="module" crossorigin src="/assets/index-pdglnQK8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-C4ygekn2.css">
 </head>
 
 <body>
   <main>
-    <div class="esp-selector-container">
-      <select class="esp-selector" id="espSelector">
-      </select>
+    <div class="header-section">
+      <div class="location-badge">Schulgarten</div>
+      <div class="title-box">
+        <h1>Wetterstation</h1>
+        <h2 id="lastUpdate">letztes Update: <br>23.06.2026, 21:46:08</h2>
+      </div>
+      <div class="cloud-container">
+        <canvas id="bg"></canvas>
+      </div>
     </div>
 
     <div class="container">
-      <div class="sun-stats">
-        <!--h2>Azimuth</h2>
-          <p id="azimuth"></p>
-
-          <h2>Höhe</h2>
-          <p id="altitude"></p-->
-
-        <h2>Sonnenaufgang</h2>
-        <p id="sunrise"></p>
-
-        <h2>Sonnenuntergang</h2>
-        <p id="sunset"></p>
-      </div>
-      <div class="no-border-box">
-        <h1>Wetterstation</h1>
-        <h2 id="lastUpdate">letztes Update:</h2>
-      </div>
-      <div class="no-border-box">
-
-      </div>
       <div class="box" id="temperatur">
         <h2>Temperatur</h2>
-        <h3 id="currTemperature">Aktuell:0.0</h3>
+        <h3 id="currTemperature">Aktuell: 25.38°C</h3>
         <div class="chart">
           <canvas id="temperatur-chart"></canvas>
         </div>
       </div>
       <div class="box" id="pressure">
         <h2>Luftdruck</h2>
-        <h3 id="currPressure">Aktuell:0.0</h3>
+        <h3 id="currPressure">Aktuell: 1009 hPa</h3>
         <div class="chart">
           <canvas id="pressure-chart"></canvas>
         </div>
       </div>
       <div class="box" id="humidity">
         <h2>Luftfeuchtigkeit</h2>
-        <h3 id="currHumidity">Aktuell:0.0</h3>
+        <h3 id="currHumidity">Aktuell: 67.68%</h3>
         <div class="chart">
           <canvas id="humidity-chart"></canvas>
         </div>
       </div>
     </div>
   </main>
-
-  <canvas id="bg"></canvas>
+
 </body>
 
 </html>
