@@ -9,9 +9,6 @@ body {
   overflow-x: hidden;
   background-color: #253949;
   font-family: 'Arial', 'Helvetica', sans-serif;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 main {
@@ -21,8 +18,6 @@ main {
   justify-content: center;
   position: relative;
   z-index: 10;
-  flex: 1;
-  overflow-y: auto;
 }
 
 /* Headings */
@@ -32,35 +27,36 @@ h1, h2, h3, p {
 }
 
 h1 {
-  font-size: 3.5vw;
+  font-size: 4.7vw;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 17.5vh;
   transition: font-size 100ms ease-in-out;
 }
 
 h1:hover {
-  font-size: 3.6vw;
+  font-size: 4.8vw;
 }
 
 p {
-  font-size: 1.3vw;
+  font-size: 1.7vw;
 }
 
 h2 {
-  font-size: 1.8vw;
+  font-size: 2.6vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 0.8vh;
+  padding-top: 1.9vh;
 }
 
 h3 {
-  font-size: 1.1vw;
+  font-size: 1.45vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 0.8vh;
+  padding-top: 1.5vh;
 }
 
 /* Background */
@@ -75,30 +71,28 @@ h3 {
 
 /* Containers */
 .container {
-  padding: 2vh 1.5vw;
+  padding: 5vh 2vw;
+  min-height: 90vh;
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  gap: 1.5vw;
+  gap: 2vw;
   align-items: flex-start;
   width: 100%;
   max-width: 100%;
-  max-height: calc(100vh - 60px);
-  overflow-y: auto;
 }
 
 /* Box Styles */
 .box, .sun-stats, .no-border-box {
-  width: 22vw;
-  border-radius: 1.5vh;
+  width: 25.7vw;
+  border-radius: 3.8vh;
   border: 0.15vh solid white;
   background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(1.5vh);
+  backdrop-filter: blur(3.8vh);
   transition: transform 100ms ease-in-out;
-  min-height: 180px;
+  min-height: 250px;
   height: auto;
   flex-shrink: 0;
-  padding: 1.2vh;
 }
 
 .no-border-box {
@@ -106,7 +100,6 @@ h3 {
   background: none;
   backdrop-filter: none;
   min-height: auto;
-  padding: 0;
 }
 
 .box:hover,
@@ -116,25 +109,27 @@ h3 {
 
 .sun-stats {
   height: auto;
-  min-height: 180px;
+  min-height: 26.6vh;
+  transform: translateY(0);
+}
+
+.sun-stats:hover {
+  transform: scale(1.01);
 }
 
 .no-border-box {
-  width: 22vw;
+  width: 25.7vw;
   height: auto;
-  min-height: 180px;
-  border-radius: 1.5vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  min-height: 49.4vh;
+  border-radius: 3.8vh;
 }
 
 /* Chart */
 .chart {
-  padding: 0.8vh;
-  width: 100%;
-  height: 100%;
-  min-height: 120px;
+  padding: 5%;
+  width: 90%;
+  height: auto;
+  min-height: 150px;
 }
 
 /* ESP Selector */
@@ -145,194 +140,139 @@ h3 {
 
 .esp-selector {
   text-align: center;
-  position: fixed;
-  top: 20px;
+  position: absolute;
   left: 50%;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 1.5vh;
-  padding: 0.8vh;
+  font-size: 2.5vh;
+  padding: 1vh;
   color: grey;
   background-color: white;
   border-radius: 25px;
-  transform: translateX(-50%);
+  transform: translate(-50%, 50%);
   z-index: 100;
 }
 
-/* Desktop (1024px and up) - everything fits on screen */
-@media screen and (min-width: 1024px) {
-  main {
-    overflow: hidden;
-  }
-
+/* Mobile Layout */
+@media screen and (max-width: 1024px) {
   .container {
-    max-height: 100vh;
-    overflow: hidden;
-    padding: 1.5vh 1vw;
-    gap: 1vw;
-  }
-
-  .box, .sun-stats, .no-border-box {
-    width: 18vw;
-    min-height: 140px;
-    padding: 1vh;
-  }
-
-  .chart {
-    min-height: 90px;
-  }
-
-  h1 {
-    font-size: 3vw;
-  }
-
-  h2 {
-    font-size: 1.5vw;
-    padding-top: 0.5vh;
-  }
-
-  h3 {
-    font-size: 0.95vw;
-    padding-top: 0.5vh;
-  }
-
-  p {
-    font-size: 1.1vw;
-  }
-}
-
-/* Tablets (768px - 1023px) - cloud and sunrise swap positions */
-@media screen and (max-width: 1023px) and (min-width: 769px) {
-  .container {
-    flex-direction: row;
-    overflow-y: auto;
+    gap: 1.5vw;
+    padding: 4vh 1vw;
   }
 
   .box, .sun-stats, .no-border-box {
     width: 48%;
-    min-height: 160px;
-    padding: 1.2vh;
-  }
-
-  .no-border-box {
-    width: 48%;
-  }
-
-  /* Swap: sun-stats becomes 4th, no-border-box becomes 1st */
-  .sun-stats {
-    order: 4;
-  }
-
-  .no-border-box:nth-of-type(2) {
-    order: 1;
-  }
-
-  .box:nth-of-type(3) {
-    order: 2;
-  }
-
-  .box:nth-of-type(4) {
-    order: 3;
-  }
-
-  .box:nth-of-type(5) {
-    order: 5;
-  }
-
-  h1 {
-    font-size: 4.5vw;
-  }
-
-  h2 {
-    font-size: 2vw;
-    padding-top: 1vh;
-  }
-
-  h3 {
-    font-size: 1.4vw;
-    padding-top: 0.8vh;
-  }
-
-  p {
-    font-size: 1.6vw;
-  }
-}
-
-/* Small Tablets (600px - 768px) */
-@media screen and (max-width: 768px) and (min-width: 600px) {
-  .container {
-    flex-direction: column;
-    padding: 1.5vh 1vw;
-    gap: 1.2vh;
-  }
-
-  .box, .sun-stats, .no-border-box {
-    width: 90vw;
-    max-width: 100%;
-    min-height: 150px;
-    padding: 1.2vh;
-  }
-
-  h1 {
-    font-size: 5vw;
-  }
-
-  h2 {
-    font-size: 2.2vw;
-    padding-top: 1vh;
-  }
-
-  h3 {
-    font-size: 1.5vw;
-    padding-top: 0.8vh;
-  }
-
-  p {
-    font-size: 1.8vw;
-  }
-}
-
-/* Mobile (max 600px) */
-@media screen and (max-width: 599px) {
-  main {
-    overflow-y: auto;
-  }
-
-  .container {
-    flex-direction: column;
-    padding: 1vh 0.8vw;
-    gap: 1vh;
-  }
-
-  .box, .sun-stats, .no-border-box {
-    width: 95vw;
-    min-height: 130px;
-    padding: 1vh;
+    min-height: 230px;
   }
 
   h1 {
     font-size: 5.5vw;
+    padding-top: 10vh;
   }
 
   h2 {
-    font-size: 2.5vw;
-    padding-top: 0.8vh;
+    font-size: 3vw;
   }
 
   h3 {
-    font-size: 1.6vw;
-    padding-top: 0.6vh;
+    font-size: 1.7vw;
   }
 
   p {
     font-size: 2vw;
   }
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 1.2vh;
+    padding: 2vh;
+    align-items: center;
+  }
+
+  .box, .sun-stats, .no-border-box {
+    width: 90vw;
+    max-width: 500px;
+    height: auto;
+    min-height: 200px;
+  }
+
+  .no-border-box {
+    width: 90vw;
+    max-width: 500px;
+    min-height: auto;
+  }
+
+  h1 {
+    font-size: 6vh;
+    padding-top: 8vh;
+  }
+
+  h1:hover {
+    font-size: 6.1vh;
+  }
+
+  p {
+    font-size: 2.5vh;
+  }
+
+  h2 {
+    font-size: 3vh;
+    padding-top: 1.5vh;
+  }
+
+  h3 {
+    font-size: 2vh;
+    padding-top: 1vh;
+  }
 
   .esp-selector {
-    font-size: 1.3vw;
-    padding: 0.6vh;
+    font-size: 2vh;
+    padding: 0.8vh;
   }
 
   .chart {
-    min-height: 80px;
+    width: auto;
+    height: auto;
+    min-height: 120px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 1.5vh;
+    gap: 1vh;
+  }
+
+  .box, .sun-stats, .no-border-box {
+    width: 100%;
+    min-height: 180px;
+  }
+
+  h1 {
+    font-size: 4.5vh;
+    padding-top: 6vh;
+  }
+
+  h2 {
+    font-size: 2.2vh;
+  }
+
+  h3 {
+    font-size: 1.5vh;
+  }
+
+  p {
+    font-size: 1.8vh;
+  }
+
+  .esp-selector {
+    font-size: 1.5vh;
+    padding: 0.5vh;
+  }
+
+  .chart {
+    padding: 3%;
+    min-height: 100px;
   }
 }
