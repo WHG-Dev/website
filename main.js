@@ -342,6 +342,10 @@ let rotationSpeed = 0.0001;
 let time = Math.random() * 1000;
 
 function animateCloud(cloud) {
+    if(isTouchDevice){
+        cloud.visible = false;
+    }
+
     time += 0.01;
     const offsetX = Math.sin(time * speed) * moveRadius;
     const offsetY = Math.cos(time * speed) * moveRadius;
@@ -386,9 +390,6 @@ scene.add(cursorLight);
 function animate() {
     requestAnimationFrame(animate);
     if (cloud) {
-        if(isTouchDevice){
-            cloud.visible = false;
-        }
         animateCloud(cloud);
         if (cursorLight.position.distanceTo(cloud.position) < 5) {
             cloud.scale.set(1.02, 1.02, 1.02);
