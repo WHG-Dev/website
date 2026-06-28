@@ -324,7 +324,6 @@ ModelLoader.load("models/cloud1.gltf", function (gltf) {
     });
     cloud.renderOrder = 999;
     scene.add(cloud);
-    
 }, function (xhr) {
     console.log((xhr.loaded / xhr.total * 100) + "% loaded");
 }, function (error) {
@@ -388,6 +387,9 @@ scene.add(cursorLight);
 function animate() {
     requestAnimationFrame(animate);
     if (cloud) {
+        if(isTouchDevice){
+            cloud.visible = false;
+        }
         animateCloud(cloud);
         if (cursorLight.position.distanceTo(cloud.position) < 5) {
             cloud.scale.set(1.02, 1.02, 1.02);
