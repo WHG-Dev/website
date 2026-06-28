@@ -387,15 +387,14 @@ scene.add(cursorLight);
 function animate() {
     requestAnimationFrame(animate);
     if (cloud) {
-        if(isTouchDevice){
-            cloud.visible = false;
+        if(!isTouchDevice){
+            if (cursorLight.position.distanceTo(cloud.position) < 5) {
+                cloud.scale.set(1.02, 1.02, 1.02);
+            } else {
+                cloud.scale.set(1, 1, 1);
+            }
         }
         animateCloud(cloud);
-        if (cursorLight.position.distanceTo(cloud.position) < 5) {
-            cloud.scale.set(1.02, 1.02, 1.02);
-        } else {
-            cloud.scale.set(1, 1, 1);
-        }
     }
     //renderer.render(scene,camera);
     composer.render();
