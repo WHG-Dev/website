@@ -324,9 +324,7 @@ ModelLoader.load("models/cloud1.gltf", function (gltf) {
     });
     cloud.renderOrder = 999;
     scene.add(cloud);
-    if(isTouchDevice){
-        cloud.visible = false;
-    }
+    
 }, function (xhr) {
     console.log((xhr.loaded / xhr.total * 100) + "% loaded");
 }, function (error) {
