@@ -329,10 +329,6 @@ ModelLoader.load("models/cloud1.gltf", function (gltf) {
 }, function (error) {
     console.error(error);
 })
-
-if(isTouchDevice){
-    cloud.visible = false;
-}
 // Keep the cloud in a stable relative position inside the view
 // x,y are relative (0..1) where (0,0) is top-left of the visible ortho area and (1,1) is bottom-right
 const cloudRelativePos = { x: 0.85, y: 0.7, z: -5 };
@@ -390,6 +386,9 @@ scene.add(cursorLight);
 function animate() {
     requestAnimationFrame(animate);
     if (cloud) {
+        if(isTouchDevice){
+            cloud.visible = false;
+        }
         animateCloud(cloud);
         if (cursorLight.position.distanceTo(cloud.position) < 5) {
             cloud.scale.set(1.02, 1.02, 1.02);
