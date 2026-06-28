@@ -387,12 +387,14 @@ scene.add(cursorLight);
 function animate() {
     requestAnimationFrame(animate);
     if (cloud) {
-        if(!isTouchDevice){
-            if (cursorLight.position.distanceTo(cloud.position) < 5) {
-                cloud.scale.set(1.02, 1.02, 1.02);
-            } else {
-                cloud.scale.set(1, 1, 1);
-            }
+        if (cursorLight.position.distanceTo(cloud.position) < 5) {
+            cloud.scale.set(1.02, 1.02, 1.02);
+        } else {
+            cloud.scale.set(1, 1, 1);
+        }
+
+        if(isTouchDevice){
+           cloud.visible = false 
         }
         animateCloud(cloud);
     }
@@ -478,8 +480,9 @@ function onMouseMove(e) {
     let mouseX = (e.clientX / window.innerWidth) * 2 - 1;
     let mouseY = (e.clientY / window.innerHeight) * 2 - 1;
     //console.log(mouseX,mouseY);
-
-    cursorLight.position.set(mouseX * 10 * aspect, -(mouseY * 10), -2);
+    if(!isTouchDevice){
+        cursorLight.position.set(mouseX * 10 * aspect, -(mouseY * 10), -2);
+    }
 
 }
 function onTouchMove(e) {
