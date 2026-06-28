@@ -17,6 +17,10 @@ const targetBox = (function () {
     return boxes && boxes.length > 1 ? boxes[1] : null;
 })();
 
+const isTouchDevice = window.matchMedia(
+  "(hover: none) and (pointer: coarse)"
+).matches;
+
 function setNames(names) {
     for (const key in names) {
         if (names.hasOwnProperty(key)) {
@@ -325,6 +329,10 @@ ModelLoader.load("models/cloud1.gltf", function (gltf) {
 }, function (error) {
     console.error(error);
 })
+
+if(isTouchDevice){
+    cloud.visible = false;
+}
 // Keep the cloud in a stable relative position inside the view
 // x,y are relative (0..1) where (0,0) is top-left of the visible ortho area and (1,1) is bottom-right
 const cloudRelativePos = { x: 0.85, y: 0.7, z: -5 };
